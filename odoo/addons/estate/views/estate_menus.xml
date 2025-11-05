@@ -1,0 +1,59 @@
+<odoo>
+    <!-- Top Level Menu -->
+    <menuitem
+        id="menu_estate_root"
+        name="Estate"
+        sequence="10"
+        groups="estate.estate_group_user,estate.estate_group_manager"
+    />
+
+    <!-- Second Level Menu -->
+    <menuitem
+        id="menu_estate_properties"
+        name="Properties"
+        parent="menu_estate_root"
+        sequence="10"
+        groups="estate.estate_group_user,estate.estate_group_manager"
+    />
+    <menuitem
+        id="menu_estate_settings"
+        name="Settings"
+        parent="menu_estate_root"
+        sequence="10"
+        groups="estate.estate_group_user,estate.estate_group_manager"
+    />
+
+    <!-- Third Level Menu: Action -->
+    <menuitem
+        id="menu_estate_property_action"
+        name="Properties"
+        parent="menu_estate_properties"
+        action="estate_property_action"
+        sequence="10"
+        groups="estate.estate_group_user,estate.estate_group_manager"
+    />
+    <menuitem
+        id="menu_estate_property_type_action"
+        name="Property Types"
+        parent="menu_estate_settings"
+        action="estate_property_type_action"
+        sequence="10"
+        groups="estate.estate_group_user,estate.estate_group_manager"
+    />
+        <menuitem
+        id="menu_estate_property_offer_action"
+        name="Property Offers"
+        parent="menu_estate_settings"
+        action="estate_property_offer_action"
+        sequence="10"
+        groups="estate.estate_group_user,estate.estate_group_manager"
+    />
+    <menuitem
+        id="menu_estate_property_tag_action"
+        name="Property Tags"
+        parent="menu_estate_settings"
+        action="estate_property_tag_action"
+        sequence="10"
+        groups="estate.estate_group_user,estate.estate_group_manager"
+    />
+</odoo>

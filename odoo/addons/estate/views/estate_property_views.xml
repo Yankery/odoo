@@ -1,0 +1,94 @@
+    <odoo>
+        <!-- List View -->
+        <record id="view_estate_property_list" model="ir.ui.view">
+            <field name="name">estate.property.list</field>
+            <field name="model">estate.property</field>
+            <field name="arch" type="xml">
+                <list class="text-center">
+                    <field name="name" string="Property Name" width="30%" class="text-center"/>
+                    <field name="price" string="Price" width="15%" class="text-center"/>
+                    <field name="bedrooms" string="Bedrooms" width="5%" class="text-center"/>
+                    <field name="bathrooms" string="Bathrooms" width="5%" class="text-center"/>
+                    <field name="available" string="Available" width="10%" class="text-center"/>
+                    <field name="date_available" string="Available Date" width="15%" class="text-center"/>
+                    <field name="state" string="State" width="20%"/>
+                    <field name="tag_ids" widget="many2many_tags" string="Tags" width="20%" class="text-center"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Form View -->
+        <record id="view_estate_property_form" model="ir.ui.view">
+            <field name="name">estate.property.form</field>
+            <field name="model">estate.property</field>
+            <field name="arch" type="xml">
+                <form string="Property">
+                    <header>
+                        <button name="action_cancel" type="object" string="Cancel" invisible="state in ('canceled', 'sold')"/>
+                        <button name="action_sold" type="object" string="Sold" invisible="state in ('canceled', 'sold')"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="price"/>
+                            <field name="available"/>
+                            <field name="date_available"/>
+                            <field name="property_type_id"/>
+                            <field name="bedrooms"/>
+                            <field name="bathrooms"/>
+                            <field name="living_area"/>
+                            <field name="garden"/>
+                            <field name="garage"/>
+                            <field name="garden_area" invisible="not garden"/>
+                            <field name="garden_orientation" invisible="not garden"/>
+                            <field name="state" widget="statusbar" statusbar_visible="new,offer_received,offer_accepted,sold,canceled" statusbar_colors='{"sold": "success", "canceled": "danger"}'/>
+                            <field name="total_area"/>
+                            <field name="best_price"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <field name="offer_ids" readonly="state in ('offer_accepted', 'sold', 'canceled')"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_estate_property_search" model="ir.ui.view">
+            <field name="name">estate.property.search</field>
+            <field name="model">estate.property</field>
+            <field name="arch" type="xml">
+                <search string="Search Properties">
+                    <!-- Basic Fields -->
+                    <field name="name" string="Property Name"/>
+                    <field name="price" string="Price"/>
+                    <field name="bedrooms" string="Bedrooms"/>
+                    <field name="available" string="Available"/>
+
+                    <!-- Filters -->
+                    <filter string="Available" name="available_true" domain="[('available', '=', True)]"/>
+                    <filter string="Has Garden" name="has_garden" domain="[('garden', '=', True)]"/>
+                    <filter string="Has Garage" name="has_garage" domain="[('garage', '=', True)]"/>
+                    <filter string="State: New" name="state_new" domain="[('state', '=', 'new')]"/>
+                    <filter string="State: Offer Received" name="state_offer_received" domain="[('state', '=', 'offer_received')]"/>
+                    <filter string="State: Offer Accepted" name="state_offer_accepted" domain="[('state', '=', 'offer_accepted')]"/>
+                    <filter string="State: Sold" name="state_sold" domain="[('state', '=', 'sold')]"/>
+                    <filter string="State: Canceled" name="state_canceled" domain="[('state', '=', 'canceled')]"/>
+
+                    <!-- Group By Options -->
+                    <group expand="0" string="Group By">
+                        <filter string="Property Type" name="group_by_type" context="{'group_by': 'property_type_id'}"/>
+                        <filter string="Availability" name="group_by_available" context="{'group_by': 'available'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="estate_property_action" model="ir.actions.act_window">
+            <field name="name">Properties</field>
+            <field name="res_model">estate.property</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_estate_property_search"/>
+        </record>
+    </odoo>
