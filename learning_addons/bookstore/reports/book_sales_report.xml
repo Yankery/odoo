@@ -1,0 +1,11 @@
+<odoo>
+    <data>
+        <record id="action_book_sales_report" model="ir.actions.report">
+            <field name="name">Book Sales (30 days)</field>
+            <field name="model">sale.order.line</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">bookstore.sales_report_template</field>
+            <field name="report_file">bookstore.sales_report_template</field>
+        </record>
+    </data>
+</odoo>

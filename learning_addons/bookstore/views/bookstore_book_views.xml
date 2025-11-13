@@ -1,0 +1,154 @@
+<odoo>
+    <!-- Tree View -->
+    <record id="view_bookstore_book_tree" model="ir.ui.view">
+        <field name="name">bookstore.book.tree</field>
+        <field name="model">bookstore.book</field>
+        <field name="arch" type="xml">
+            <tree default_order="name">
+                <field name="currency_id" column_invisible="1"/>
+                <field name="cover" widget="image"/>
+                <field name="name" string="Title" width="20%"/>
+                <field name="barcode" string="ISBN" width="10%"/>
+                <field name="list_price" widget="monetary" string="Sale Price" width="10%" options="{'currency_field': 'currency_id'}"/>
+                <field name="rental_price" widget="monetary" string="Rental" width="10%" options="{'currency_field': 'currency_id'}"/>
+                <field name="quantity" string="Quantity" width="5%"/>
+                <field name="is_published" string="Published" widget="boolean_toggle" width="10%"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_bookstore_book_form" model="ir.ui.view">
+        <field name="name">bookstore.book.form</field>
+        <field name="model">bookstore.book</field>
+        <field name="arch" type="xml">
+            <form string="Book">
+                <header>
+                    <button name="action_publish"
+                            string="Publish"
+                            type="object"
+                            class="oe_highlight"
+                            invisible="is_published"
+                            help="Make this book visible in the portal"/>
+                    <button name="action_unpublish"
+                            string="Unpublish"
+                            type="object"
+                            invisible="not is_published"
+                            help="Hide this book from the portal"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_publish"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-globe"
+                                invisible="is_published">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text text-danger">Unpublished</span>
+                            </div>
+                        </button>
+                        <button name="action_unpublish"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-globe"
+                                invisible="not is_published">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text text-success">Published</span>
+                            </div>
+                        </button>
+
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <div class="o_row d-flex">
+                        <div class="me-4">
+                            <field name="cover" widget="image" class="oe_avatar" options="{'preview_image': 'cover', 'size': (150, 200)}"/>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h1><field name="name" placeholder="Book Title" required="1"/></h1>
+                            <field name="author_ids" widget="many2many_tags" placeholder="Add authors..."/>
+                            <div class="o_row">
+                                <label for="barcode" string="ISBN:"/>
+                                <field name="barcode" placeholder="978-3-16-148410-0"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <notebook>
+                        <page string="Details">
+                            <group>
+                                <group string="Information">
+                                    <field name="published_date"/>
+                                    <field name="pages"/>
+                                    <field name="language"/>
+                                    <field name="quantity"/>
+                                </group>
+                                <group string="Pricing">
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="list_price" widget="monetary" string="Sale Price" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="rental_price" widget="monetary" string="Daily Rental" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="standard_price" widget="monetary" string="Cost" options="{'currency_field': 'currency_id'}"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Description">
+                            <field name="description" placeholder="Book summary, notes..." nolabel="1"/>
+                        </page>
+                        <page string="Portal Settings">
+                            <group>
+                                <group string="Visibility">
+                                    <field name="is_published" string="Published in Portal"/>
+                                    <field name="sale_ok" string="Can be Sold"/>
+                                </group>
+                                <group string="Additional Info">
+                                    <field name="create_date" readonly="1"/>
+                                    <field name="write_date" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_bookstore_book_search" model="ir.ui.view">
+        <field name="name">bookstore.book.search</field>
+        <field name="model">bookstore.book</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="barcode"/>
+                <field name="author_ids"/>
+                <field name="language"/>
+
+                <filter string="In Stock" name="filter_in_stock" domain="[('quantity', '&gt;', 0)]"/>
+                <filter string="Out of Stock" name="filter_out_of_stock" domain="[('quantity', '=', 0)]"/>
+                <separator/>
+                <filter string="Published" name="filter_published" domain="[('is_published', '=', True)]"/>
+                <filter string="Unpublished" name="filter_unpublished" domain="[('is_published', '=', False)]"/>
+
+                <group expand="1" string="Group By">
+                    <filter string="Language" name="group_by_language" context="{'group_by': 'language'}"/>
+                    <filter string="Published Status" name="group_by_published" context="{'group_by': 'is_published'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="bookstore_book_action" model="ir.actions.act_window">
+        <field name="name">Books</field>
+        <field name="res_model">bookstore.book</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first book!</p>
+        </field>
+    </record>
+</odoo>

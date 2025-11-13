@@ -1,0 +1,13 @@
+<odoo>
+    <data>
+        <record id="action_book_inventory_report" model="ir.actions.report">
+            <field name="name">Books Inventory</field>
+            <field name="model">bookstore.book</field>
+            <field name="report_type">qweb-html</field>
+            <field name="report_name">bookstore.inventory_report_template</field>
+            <field name="report_file">bookstore.inventory_report_template</field>
+            <field name="binding_model_id" ref="model_bookstore_book"/>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

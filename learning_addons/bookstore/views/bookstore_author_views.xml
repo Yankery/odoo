@@ -1,0 +1,79 @@
+    <odoo>
+        <!-- Tree View -->
+        <record id="view_bookstore_author_tree" model="ir.ui.view">
+            <field name="name">bookstore.author.tree</field>
+            <field name="model">bookstore.author</field>
+            <field name="arch" type="xml">
+                <tree string="Authors" js_class="tree_with_toast">
+                    <field name="avatar" string="Avatar" width="40%" widget="image"/>
+                    <field name="name"/>
+                    <field name="date_of_birth" string="Date Of Birth"/>
+                    <field name="unique_title_count" string="Unique Titles" readonly="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form View -->
+        <record id="view_bookstore_author_form" model="ir.ui.view">
+            <field name="name">bookstore.author.form</field>
+            <field name="model">bookstore.author</field>
+            <field name="arch" type="xml">
+                <form string="Author Details">
+                    <sheet>
+                        <div class="o_row d-flex align-items-start">
+                            <div class="o_author_avatar_form">
+                                <field name="avatar" widget="image" class="oe_avatar" options="{'preview_image': 'cover', 'size': (120, 160)}"/>
+                            </div>
+                            <div class="flex-grow-1 ms-4">
+                                <h1 class="mt-0">
+                                    <field name="name" placeholder="Author Name"/>
+                                </h1>
+                                <field name="book_ids" string="Books" widget="many2many_tags" placeholder="Select books..."/>
+                            </div>
+                        </div>
+                        <notebook>
+                            <page string="Details">
+                                <group>
+                                    <group string="Basic Info">
+                                        <field name="date_of_birth" string="Date Of Birth"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <page string="Biography" name="biography">
+                                <field name="biography" placeholder="Write a brief summary or notes about the author..." nolabel="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_bookstore_author_search" model="ir.ui.view">
+            <field name="name">bookstore.author.search</field>
+            <field name="model">bookstore.author</field>
+            <field name="arch" type="xml">
+                <search string="Search Authors">
+                    <!-- Basic Fields -->
+                    <field name="name" string="Name"/>
+
+                    <!-- Filters -->
+                    <filter string="Has Books" name="has_books" domain="[('book_ids', '!=', False)]"/>
+                    <filter string="No Books" name="no_books" domain="[('book_ids', '=', False)]"/>
+                    <!-- Group By Options -->
+                    <group string="Group By">
+                        <filter string="Date of Birth" name="group_by_dob" context="{'group_by':'date_of_birth'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="bookstore_author_action" model="ir.actions.act_window">
+            <field name="name">Authors</field>
+            <field name="res_model">bookstore.author</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_bookstore_author_search"/>
+        </record>
+    </odoo>

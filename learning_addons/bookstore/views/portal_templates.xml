@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Portal Menu Entry -->
+    <template id="portal_my_home_menu_bookstore" name="Portal My Home Menu - Bookstore" inherit_id="portal.portal_my_home" priority="30">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Books</t>
+                <t t-set="url" t-value="'/my/books'"/>
+                <t t-set="placeholder_count" t-value="'book_count'"/>
+            </t>
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">My Orders</t>
+                <t t-set="url" t-value="'/my/orders'"/>
+                <t t-set="placeholder_count" t-value="'book_order_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Book Catalog Page -->
+    <template id="portal_my_books" name="My Books">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Books</t>
+            </t>
+
+            <t t-if="not books">
+                <div class="alert alert-warning mt-3" role="alert">
+                    No books found.
+                </div>
+            </t>
+
+            <t t-if="books">
+                <div class="row mt-4">
+                    <t t-foreach="books" t-as="book">
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                            <div class="card h-100">
+                                <t t-if="book.cover">
+                                    <img t-att-src="'data:image/png;base64,%s' % book.cover.decode('utf-8')"
+                                         class="card-img-top"
+                                         style="height: 250px; object-fit: cover;"
+                                         t-att-alt="book.name"/>
+                                </t>
+                                <t t-else="">
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center"
+                                         style="height: 250px;">
+                                        <i class="fa fa-book fa-4x text-muted"/>
+                                    </div>
+                                </t>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">
+                                        <a t-att-href="'/my/books/%s' % book.id" t-esc="book.name"/>
+                                    </h5>
+                                    <p class="card-text small text-muted mb-2">
+                                        <t t-if="book.author_ids">
+                                            by <span t-esc="', '.join(book.author_ids.mapped('name'))"/>
+                                        </t>
+                                    </p>
+                                    <p class="card-text">
+                                        <strong class="text-primary" t-esc="'$%.2f' % book.list_price"/>
+                                    </p>
+                                    <p class="card-text small">
+                                        <span t-if="book.quantity > 0" class="badge bg-success">
+                                            <t t-esc="book.quantity"/> in stock
+                                        </span>
+                                        <span t-else="" class="badge bg-danger">Out of stock</span>
+                                    </p>
+                                    <div class="mt-auto">
+                                        <a t-att-href="'/my/books/%s' % book.id" class="btn btn-primary btn-sm w-100">
+                                            View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+
+                <div t-if="pager" class="o_portal_pager text-center mt-4">
+                    <t t-call="portal.pager"/>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- Book Detail Page -->
+    <template id="portal_book_detail" name="Book Detail">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <div class="row">
+                    <div class="col-lg-4 col-md-5">
+                        <t t-if="book.cover">
+                            <img t-att-src="'data:image/png;base64,%s' % book.cover.decode('utf-8')"
+                                 class="img-fluid rounded shadow"
+                                 t-att-alt="book.name"/>
+                        </t>
+                        <t t-else="">
+                            <div class="bg-light d-flex align-items-center justify-content-center rounded shadow"
+                                 style="height: 400px;">
+                                <i class="fa fa-book fa-5x text-muted"/>
+                            </div>
+                        </t>
+                    </div>
+
+                    <div class="col-lg-8 col-md-7">
+                        <h1 t-esc="book.name"/>
+                        <p class="text-muted lead" t-if="book.author_ids">
+                            by <span t-esc="', '.join(book.author_ids.mapped('name'))"/>
+                        </p>
+
+                        <hr/>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <p><strong>Price:</strong> <span class="text-primary h4" t-esc="'$%.2f' % book.list_price"/></p>
+                                <p t-if="book.rental_price > 0">
+                                    <strong>Rental Price:</strong> <span t-esc="'$%.2f' % book.rental_price"/>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Availability:</strong>
+                                    <span t-if="book.quantity > 0" class="badge bg-success">
+                                        <t t-esc="book.quantity"/> in stock
+                                    </span>
+                                    <span t-else="" class="badge bg-danger">Out of stock</span>
+                                </p>
+                                <p t-if="book.published_date">
+                                    <strong>Published:</strong> <span t-esc="book.published_date"/>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mb-3" t-if="book.pages or book.language">
+                            <p t-if="book.pages"><strong>Pages:</strong> <span t-esc="book.pages"/></p>
+                            <p t-if="book.language"><strong>Language:</strong> <span t-esc="book.language"/></p>
+                        </div>
+
+                        <hr/>
+
+                        <div class="mb-4" t-if="book.quantity > 0">
+                            <h5>Order this book</h5>
+                            <div class="input-group mb-3" style="max-width: 300px;">
+                                <input type="number" class="form-control" id="book_quantity"
+                                       value="1" min="1" t-att-max="book.quantity"/>
+                                <button class="btn btn-primary" type="button" id="btn_order_book"
+                                        t-att-data-book-id="book.id">
+                                    <i class="fa fa-shopping-cart"/> Add to Order
+                                </button>
+                            </div>
+                            <div id="order_message"></div>
+                        </div>
+
+                        <a href="/my/books" class="btn btn-secondary">
+                            <i class="fa fa-arrow-left"/> Back to Catalog
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- My Orders Page -->
+    <template id="portal_my_orders" name="My Orders">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">My Orders</t>
+            </t>
+
+            <t t-if="not orders">
+                <div class="alert alert-info mt-3" role="alert">
+                    You haven't placed any orders yet.
+                </div>
+            </t>
+
+            <t t-if="orders">
+                <div class="table-responsive mt-4">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Order #</th>
+                                <th>Book</th>
+                                <th>Quantity</th>
+                                <th>Total Price</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="orders" t-as="order">
+                                <tr>
+                                    <td><strong t-esc="order.name"/></td>
+                                    <td t-esc="order.book_id.name"/>
+                                    <td t-esc="order.quantity"/>
+                                    <td><strong t-esc="'$%.2f' % order.total_price"/></td>
+                                    <td t-esc="order.order_date.strftime('%Y-%m-%d %H:%M')"/>
+                                    <td>
+                                        <span t-attf-class="badge bg-{{
+                                            'secondary' if order.state == 'draft' else
+                                            'info' if order.state == 'confirmed' else
+                                            'primary' if order.state == 'processing' else
+                                            'success' if order.state == 'delivered' else
+                                            'danger'
+                                        }}" t-esc="order.state.title()"/>
+                                    </td>
+                                    <td>
+                                        <a t-att-href="'/my/orders/%s' % order.id"
+                                           class="btn btn-sm btn-primary">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div t-if="pager" class="o_portal_pager text-center mt-4">
+                    <t t-call="portal.pager"/>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- Order Detail Page -->
+    <template id="portal_order_detail" name="Order Detail">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Order <span t-esc="order.name"/></h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5>Order Information</h5>
+                                <p><strong>Order Date:</strong> <span t-esc="order.order_date.strftime('%Y-%m-%d %H:%M')"/></p>
+                                <p><strong>Status:</strong>
+                                    <span t-attf-class="badge bg-{{
+                                        'secondary' if order.state == 'draft' else
+                                        'info' if order.state == 'confirmed' else
+                                        'primary' if order.state == 'processing' else
+                                        'success' if order.state == 'delivered' else
+                                        'danger'
+                                    }}" t-esc="order.state.title()"/>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Book Details</h5>
+                                <p><strong>Book:</strong> <span t-esc="order.book_id.name"/></p>
+                                <p t-if="order.book_id.author_ids">
+                                    <strong>Author(s):</strong>
+                                    <span t-esc="', '.join(order.book_id.author_ids.mapped('name'))"/>
+                                </p>
+                            </div>
+                        </div>
+
+                        <hr/>
+
+                        <h5>Order Summary</h5>
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Unit Price:</strong></td>
+                                <td class="text-end" t-esc="'$%.2f' % order.unit_price"/>
+                            </tr>
+                            <tr>
+                                <td><strong>Quantity:</strong></td>
+                                <td class="text-end" t-esc="order.quantity"/>
+                            </tr>
+                            <tr class="table-primary">
+                                <td><strong>Total Price:</strong></td>
+                                <td class="text-end"><strong t-esc="'$%.2f' % order.total_price"/></td>
+                            </tr>
+                        </table>
+
+                        <div t-if="order.notes" class="mt-3">
+                            <h5>Notes</h5>
+                            <p t-esc="order.notes"/>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="/my/orders" class="btn btn-secondary">
+                            <i class="fa fa-arrow-left"/> Back to Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

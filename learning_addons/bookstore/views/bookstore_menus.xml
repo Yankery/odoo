@@ -1,0 +1,44 @@
+<odoo>
+    <!-- Top Level Menu -->
+    <menuitem
+        id="menu_bookstore_root"
+        name="Bookstore"
+        sequence="10"
+        groups="bookstore.bookstore_group_user,bookstore.bookstore_group_manager"
+    />
+
+    <!-- Second Level Menu -->
+    <menuitem
+        id="menu_bookstore_books"
+        name="Books"
+        parent="menu_bookstore_root"
+        sequence="10"
+    />
+    <menuitem
+        id="menu_bookstore_authors"
+        name="Authors"
+        parent="menu_bookstore_root"
+        sequence="10"
+    />
+    <menuitem id="menu_bookstore_orders"
+              name="Orders"
+              parent="menu_bookstore_root"
+              action="action_bookstore_order"
+              sequence="30"/>
+
+    <!-- Third Level Menu: Action -->
+    <menuitem
+        id="menu_bookstore_book_action"
+        name="Books Management"
+        parent="menu_bookstore_books"
+        action="bookstore_book_action"
+        sequence="10"
+    />
+    <menuitem
+        id="menu_bookstore_author_action"
+        name="Authors Management"
+        parent="menu_bookstore_authors"
+        action="bookstore_author_action"
+        sequence="10"
+    />
+</odoo>

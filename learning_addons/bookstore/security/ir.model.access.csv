@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bookstore_book_agent,bookstore.book.agent,model_bookstore_book,bookstore_group_user,1,1,1,0
+access_bookstore_book_manager,bookstore.book.manager,model_bookstore_book,bookstore_group_manager,1,1,1,1
+access_bookstore_author_agent,bookstore.author.agent,model_bookstore_author,bookstore_group_user,1,0,0,0
+access_bookstore_author_manager,bookstore.author.manager,model_bookstore_author,bookstore_group_manager,1,1,1,1
+access_bookstore_order_agent,bookstore.order.agent,model_bookstore_order,bookstore_group_user,1,1,1,0
+access_bookstore_order_manager,bookstore.order.manager,model_bookstore_order,bookstore_group_manager,1,1,1,1
+access_bookstore_order_portal,bookstore.order.portal,model_bookstore_order,base.group_portal,1,0,1,0
+access_bookstore_book_portal,bookstore.book.portal,model_bookstore_book,base.group_portal,1,0,0,0
+access_bookstore_author_portal,bookstore.author.portal,model_bookstore_author,base.group_portal,1,0,0,0
+access_product_template_portal,product.template.portal,product.model_product_template,base.group_portal,1,0,0,0
